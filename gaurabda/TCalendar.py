@@ -1194,7 +1194,7 @@ class TCalendar:
 
                 xml.write("\t\t\t<yoga name=\"{}\" />\n".format(GCStrings.GetYogaName(pvd.astrodata.nYoga) ))
 
-                xml.write("\t\t\t<paksa id=\"%c\" name=\"{}\"/>\n".format(GCStrings.GetPaksaChar(pvd.astrodata.nPaksa), GCStrings.GetPaksaName(pvd.astrodata.nPaksa) ))
+                xml.write("\t\t\t<paksa id=\"{}\" name=\"{}\"/>\n".format(GCStrings.GetPaksaChar(pvd.astrodata.nPaksa), GCStrings.GetPaksaName(pvd.astrodata.nPaksa) ))
 
                 xml.write("\t\t</sunrise>\n")
 
@@ -1222,6 +1222,15 @@ class TCalendar:
                         xml.write("\t\t<parana from=\"{:02d}:{:02d}\" to=\"{:02d}:{:02d}\" />\n".format(int(h1), int(m1*60), int(h2), int(m2*60)))
                     else:
                         xml.write("\t\t<parana after=\"{:02d}:{:02d}\" />\n".format(int(h1), int(m1*60) ))
+
+                # Output ekadasi fasting event (class=-1 to match GCAL UI format).
+                # Only output on actual fasting day (nFastType == FAST_EKADASI).
+                if pvd.nFastType == FAST_EKADASI and pvd.ekadasi_vrata_name:
+                    # Output Mahadvadasi type name first (e.g., "Trisprsa Mahadvadasi").
+                    mhd_name = GCStrings.GetMahadvadasiName(pvd.nMhdType)
+                    if mhd_name:
+                        xml.write("\t\t<festival name=\"{}\" class=\"-1\"/>\n".format(mhd_name))
+                    xml.write("\t\t<festival name=\"{} {}\" class=\"-1\"/>\n".format(GCStrings.getString(87), pvd.ekadasi_vrata_name))
 
                 for md in pvd.dayEvents:
                     prio = md['prio']
